@@ -1,5 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -pthread
+GOFLAGS = -ldflags="-s -w"
 C_TARGET = happy_c
 GO_TARGET = happy_go
 RUST_TARGET = happy_rust
@@ -19,7 +20,7 @@ $(C_TARGET): $(C_SRC)
 	$(CC) $(CFLAGS) -o $(C_TARGET) $(C_SRC)
 
 $(GO_TARGET): $(GO_SRC)
-	go build -o $(GO_TARGET) $(GO_SRC)
+	go build $(GOFLAGS) -o $(GO_TARGET) $(GO_SRC)
 
 $(RUST_TARGET): $(RUST_SRC) Cargo.toml
 	cargo build --release

@@ -58,6 +58,7 @@ Three parallel implementations are provided:
 - Creates worker threads based on CPU core count
 - Each thread processes a range of numbers
 - Uses mutex for thread-safe result collection
+- Compiled with `-O2` optimization flag
 - Binary size: ~13 KB
 
 ### Go Version (`happy_go`)
@@ -66,7 +67,8 @@ Three parallel implementations are provided:
 - Distributes work through channels
 - Uses `sync.WaitGroup` for coordination
 - Worker count based on `runtime.NumCPU()`
-- Binary size: ~2.4 MB
+- Compiled with `-ldflags="-s -w"` to strip debug symbols
+- Binary size: ~1.6 MB
 
 ### Rust Version (`happy_rust`)
 
@@ -74,7 +76,8 @@ Three parallel implementations are provided:
 - Leverages work-stealing algorithm
 - Compile-time safety guarantees
 - Functional style with parallel iterators
-- Binary size: ~487 KB
+- Compiled in release mode with LTO and aggressive optimizations
+- Binary size: ~387 KB
 
 ## Building
 
@@ -101,6 +104,18 @@ make clean
 # Build and test all versions
 make test
 ```
+
+### Optimization Flags
+
+All binaries are built with optimizations enabled:
+
+- **C**: Compiled with `-O2` for optimization and `-pthread` for threading support
+- **Go**: Compiled with `-ldflags="-s -w"` to strip debug symbols and reduce binary size
+- **Rust**: Built in release mode with:
+  - `opt-level = 3` - Maximum optimization
+  - `lto = true` - Link-time optimization
+  - `strip = true` - Strip symbols
+  - `codegen-units = 1` - Better optimization at the cost of longer compile time
 
 ## Usage
 
