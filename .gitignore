@@ -1,0 +1,9 @@
+# Rust build artifacts
+/target
+Cargo.lock
+
+# Binaries
+happy_c
+happy_go
+happy_rust
+happy

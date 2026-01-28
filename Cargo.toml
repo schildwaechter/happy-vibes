@@ -1,0 +1,15 @@
+[package]
+name = "happy_rust"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "happy_rust"
+path = "src/main.rs"
+
+[dependencies]
+rayon = "1.8"
+
+[profile.release]
+opt-level = 3
+lto = true
