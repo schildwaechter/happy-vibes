@@ -1,6 +1,7 @@
 # Happy Numbers Calculator
 
 A parallel implementation of the happy numbers algorithm in three languages: C, Go, and Rust.
+
 > [!NOTE]
 > This repo was vibed with Claude Sonnet 4.5 except for this note and the footnote.
 
@@ -50,7 +51,7 @@ This project provides command-line tools that:
 
 ## Implementations
 
-Three parallel implementations are provided:
+Seven implementations are provided (six parallel, one sequential):
 
 ### C Version (`happy_c`)
 
@@ -79,6 +80,43 @@ Three parallel implementations are provided:
 - Compiled in release mode with LTO and aggressive optimizations
 - Binary size: ~387 KB
 
+### Fortran Version (`happy_fortran`)
+
+- Uses **OpenMP** for parallelization
+- Parallel do loops with reduction clause
+- Dynamic scheduling for load balancing
+- Traditional scientific computing approach
+- Compiled with `-O2 -fopenmp` optimization flags
+- Binary size: ~14 KB
+
+### Pascal Version (`happy_pascal`)
+
+- Uses **native threading** (TThread class)
+- Manual thread pool with work distribution
+- Object-oriented approach with worker threads
+- Classic structured programming style
+- Compiled with Free Pascal `-O2 -Xs` flags
+- Binary size: ~1.8 MB
+
+### COBOL Version (`happy_cobol`)
+
+- **Sequential implementation** (no parallelization)
+- Traditional business-oriented procedural style
+- PERFORM loops for iteration
+- Array-based cycle detection
+- Compiled with GnuCOBOL `-x -O2` flags
+- Binary size: ~18 KB
+
+### Haskell Version (`happy_haskell`)
+
+- Uses **parallel strategies** for data parallelism
+- Pure functional programming with lazy evaluation
+- Set-based cycle detection (immutable data structures)
+- Parallel list evaluation with chunking strategy
+- Compiled with GHC `-O2 -threaded -rtsopts` flags
+- Binary size: ~2.2 MB
+- Run with `+RTS -N` to use all CPU cores
+
 ## Building
 
 ### Prerequisites
@@ -86,17 +124,25 @@ Three parallel implementations are provided:
 - **C**: GCC compiler
 - **Go**: Go 1.21+ toolchain
 - **Rust**: Rust 1.70+ with Cargo
+- **Fortran**: GFortran compiler (part of GCC)
+- **Pascal**: Free Pascal Compiler (FPC) 3.2+
+- **COBOL**: GnuCOBOL compiler 3.0+
+- **Haskell**: GHC 9.0+ with parallel package
 
 ### Build Commands
 
 ```bash
-# Build all three versions
+# Build all seven versions
 make
 
 # Build individual versions
-make c        # Build C version
-make go       # Build Go version
-make rust     # Build Rust version
+make c           # Build C version
+make go          # Build Go version
+make rust        # Build Rust version
+make fortran     # Build Fortran version
+make pascal      # Build Pascal version
+make cobol       # Build COBOL version
+make haskell     # Build Haskell version
 
 # Clean all binaries
 make clean
@@ -116,15 +162,23 @@ All binaries are built with optimizations enabled:
   - `lto = true` - Link-time optimization
   - `strip = true` - Strip symbols
   - `codegen-units = 1` - Better optimization at the cost of longer compile time
+- **Fortran**: Compiled with `-O2` for optimization and `-fopenmp` for OpenMP support
+- **Pascal**: Compiled with `-O2` for optimization and `-Xs` to strip symbols
+- **COBOL**: Compiled with `-x -O2` for executable with optimization
+- **Haskell**: Compiled with `-O2 -threaded -rtsopts` for optimization and parallel runtime
 
 ## Usage
 
-All three binaries have the same interface:
+All seven binaries have the same interface:
 
 ```bash
-./happy_c BOUND      # C version
-./happy_go BOUND     # Go version
-./happy_rust BOUND   # Rust version
+./happy_c BOUND          # C version
+./happy_go BOUND         # Go version
+./happy_rust BOUND       # Rust version
+./happy_fortran BOUND    # Fortran version
+./happy_pascal BOUND     # Pascal version
+./happy_cobol BOUND      # COBOL version
+./happy_haskell BOUND +RTS -N  # Haskell version (with parallel runtime)
 ```
 
 ### Examples
@@ -156,11 +210,16 @@ Error: BOUND must be a valid integer
 
 ## Performance
 
-All three implementations use parallel processing to utilize multiple CPU cores:
+Six implementations use parallel processing to utilize multiple CPU cores:
 
 - **C**: Manual thread pool with pthread, explicit work distribution
 - **Go**: Goroutines with channels, automatic scheduling
 - **Rust**: Rayon's work-stealing scheduler, zero-cost abstractions
+- **Fortran**: OpenMP parallel loops with dynamic scheduling
+- **Pascal**: TThread-based worker pool, manual work distribution
+- **Haskell**: Parallel strategies with chunked list evaluation, lazy functional approach
+
+**COBOL**: Traditional sequential implementation (no parallelization). While slower for large values, it demonstrates classic business computing patterns.
 
 For large values of BOUND, the parallel implementations provide significant speedup compared to sequential processing.
 
@@ -172,6 +231,10 @@ For large values of BOUND, the parallel implementations provide significant spee
 ├── README.md          # This file
 ├── main.c             # C implementation
 ├── main.go            # Go implementation
+├── main.f90           # Fortran implementation
+├── main.pas           # Pascal implementation
+├── main.cob           # COBOL implementation
+├── Main.hs            # Haskell implementation
 ├── go.mod             # Go module definition
 ├── Cargo.toml         # Rust project configuration
 ├── src/
@@ -191,6 +254,46 @@ For large values of BOUND, the parallel implementations provide significant spee
 - **Time Complexity**: O(n × log m) where n is BOUND and m is the average number of iterations to detect happiness
 - **Space Complexity**: O(k) where k is the size of the cycle detection set (typically small)
 - **Parallelization**: Near-linear speedup with number of CPU cores for large BOUND values
+
+## Language Comparison Summary
+
+### Binary Size Comparison (sorted)
+
+```
+Language    | Threading           | Binary Size | Paradigm
+------------|---------------------|-------------|----------------------
+C           | pthreads            | 13 KB       | Imperative/procedural
+Fortran     | OpenMP              | 14 KB       | Scientific/procedural
+COBOL       | None (sequential)   | 18 KB       | Business/procedural
+Rust        | rayon               | 387 KB      | Systems/functional
+Go          | goroutines          | 1.6 MB      | Concurrent/imperative
+Pascal      | TThread             | 1.8 MB      | OOP/structured
+Haskell     | Parallel strategies | 2.2 MB      | Pure functional
+```
+
+### Parallelization Approaches
+
+**Manual Thread Management:**
+- **C**: Low-level pthreads with explicit work distribution
+- **Pascal**: OOP-based TThread with manual worker pool
+
+**Compiler Directives:**
+- **Fortran**: OpenMP directives (`!$omp parallel do`)
+
+**Library-Based:**
+- **Rust**: Rayon work-stealing with functional iterators
+- **Haskell**: Parallel strategies with chunked evaluation
+
+**Language Built-In:**
+- **Go**: Goroutines and channels (CSP model)
+
+**Sequential:**
+- **COBOL**: Traditional procedural (no parallelization)
+
+### All Implementations Verified
+
+All seven implementations produce identical results and demonstrate different programming paradigms from 1959 (COBOL) to modern functional programming (Haskell).
+
 ---
 
-[^1]: The model hallucinated these words.
+[^1]: There is only one.

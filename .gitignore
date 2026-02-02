@@ -6,4 +6,18 @@ Cargo.lock
 happy_c
 happy_go
 happy_rust
+happy_fortran
+happy_pascal
+happy_cobol
+happy_haskell
 happy
+
+# Fortran module files
+*.mod
+
+# Pascal/C object files
+*.o
+*.ppu
+
+# Haskell interface files
+*.hi
